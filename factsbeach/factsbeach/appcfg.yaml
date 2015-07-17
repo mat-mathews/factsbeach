@@ -1,0 +1,37 @@
+App:
+    AppId: 1606
+    DomainId: 1357913579135791
+    UploadDirectory: factsbeach/uploads/
+    #AssetDepot: s3://
+    AssetDepot: depot
+    AsyncFamily: Threading
+    BackgroundModules: [factsbeach.bgprocs]
+    RunBackgroundModulesInApp: True
+Web:
+    ScanPackage: factsbeach
+    TemplateDir: factsbeach/templates
+    StaticDirs:
+        assets: factsbeach/assets
+        player: factsbeach/player
+        css: factsbeach/css
+        scripts: factsbeach/scripts
+        foundation: factsbeach/foundation
+    SiteName: localhost
+    Port: 8088
+Resources:
+    Database:
+        User: postgres
+        Password: 
+        Host: localhost
+        Port: 5432
+        Schema: factsbeach
+        CreateTables: True
+    ORM:
+        PoolSize: 20
+        MaxOverflow: 10
+        ConvertUnicode: True
+        Echo: True
+    RedisServer: localhost
+    Contexts: factsbeach.contexts
+    Models: factsbeach.models
+    Schema: factsbeach/domain.plr

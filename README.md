@@ -1,2 +1,2 @@
 # factsbeach
-Game Playe Analytics Engine
+Game Play Analytics Engine

@@ -1,0 +1,284 @@
+PYAELLAC:
+    DeclBase: PyaellaSQLAlchemyBase
+    MetaCls: PyaellaDataModelMetaclass
+    ReflMetaCls: PyaellaReflectiveModelMetaclass
+    ReflCls: PyaellaReflectiveModelMetaclass
+    SuperCls: PyaellaDataModel
+
+
+(ApplicationDomain):
+    Fields:
+        id: Column(BigInteger,
+                Sequence('application_domains_id_seq', start=22220), 
+                CheckConstraint('id<2468024680246802'), 
+                server_default=text("nextval('application_domains_id_seq')"), 
+                primary_key=True)
+        name: Column(String(64), unique=True, nullable=True)
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+    Doc: |
+
+        An ApplicationDomain defines an arbitrary boundry or demarcation based
+        on business application and/or notions respective to corporate or conglomerate 
+        entities. This does not specifically mean a 'domain name' but a unique identifier
+        like a domain name is perfectly acceptable.
+
+        An ApplicationDomain could span multiple servers, `clouds`, or any related topography.
+
+        Basic premise:
+
+            Segment a database or a cluster for companies, domains.
+            An ApplicationDomain has to be unique within each instatianated realm. 
+
+
+(Application):
+    Fields:
+        id: Column(Integer, 
+                Sequence('applications_id_seq', start=1602), 
+                CheckConstraint('id<2600'), 
+                server_default=text("nextval('applications_id_seq')"), 
+                primary_key=True)
+        name: Column(String(64), unique=True, nullable=True)
+        key_sequence: Column(String(36))
+    Relations:
+        application_domain_id: Column(BigInteger, ForeignKey('application_domains.id'))
+    Rules:
+        Unique: [id, application_domain_id]
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+    Doc: |
+
+        An Application is an application or web-app associated 
+        to an ApplicationDomain.
+
+
+(Group):
+    Fields:
+        name: Column(String(32), nullable=False)
+        description: Column(String(64), nullable=False)
+        display_name: Column(String(64), nullable=False)
+    Rules:
+        Unique: [name]
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+    Doc: |
+
+        The Group model defines names of Role Based Access Control, at a 'higher'
+        level than a User Type as defined by UserTypeLookup. A Group is considered
+        System or Database lever RBAC, such as 'SuperUser', 'Editor', 'Viewer', and 
+        can be applied to C.R.U.D in a UI of an application.
+
+
+(UserXGroup):
+    Relations:
+        user_id: Column(BigInteger, ForeignKey('users.id'))
+        group_id: Column(Integer, ForeignKey('groups.id'))
+    Rules:
+        Unique: [user_id, group_id]
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+    Doc: |
+
+        An Association model for User and Group... ie. Which User is
+        a member of which Group. These are not RDBMS users / roles
+
+
+(UserTypeLookup):
+    Fields:
+        name: Column(String(32), unique=True, nullable=False)
+        display_name: Column(String(64), unique=True)
+        description: Column(String(64), nullable=False)
+    Values:
+        name: [
+            super_user,
+            sys_admin,
+            internal_dev,
+            external_dev,
+            tester,
+            user
+        ]
+        display_name: [
+            Super User,
+            System Administrator,
+            Internal Developer,
+            External Developer,
+            Tester,
+            User
+        ]
+        description: [
+            Super User,
+            System Administrator,
+            Internal Developer,
+            External Developer,
+            Tester,
+            User
+        ]
+    Rules:
+        Unique: [name]
+    Options:
+        - add_tr_standard_lu_mod.sql.mako
+
+
+(UserXUserTypeLookup):
+    Relations:
+        user_id: Column(BigInteger, ForeignKey('users.id'), primary_key=True)
+        user_type_id: Column(Integer, ForeignKey('user_type_lu.id'), primary_key=True)
+    Rules:
+        Unique: [user_id, user_type_id]
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+
+(User):
+    Fields:
+        id: Column(BigInteger, 
+                Sequence('users_id_seq', start=1000000), 
+                server_default=text("nextval('users_id_seq')"), 
+                primary_key=True)
+        user_name: Column(String(50), unique=True)
+        email_address: Column(String(255), unique=True, nullable=False,)
+        twitter_name: Column(String(255))
+        facebook_name: Column(String(255))
+        password: Column(String(128), 
+            CheckConstraint('"char_length"(password)>126'), nullable=False)
+        first_name: Column(String(64), nullable=True)
+        last_name: Column(String(64), nullable=True)
+        address1: Column(String(255))
+        address2: Column(String(255))
+        city: Column(String(255))
+        subnational: Column(String(255))
+        country_code: Column(String(3))
+        post_code: Column(String(16))
+        phone_number: Column(String(15))
+        mobile_number: Column(String(15))
+        fax_number: Column(String(15))
+        job_title: Column(String(128))
+        open_id: Column(String(128))
+        auth_code: Column(String(8))
+        access_token: Column(String(128))
+        device_tokens: Column(Text)
+        profile_pic: Column(String)
+        profile_blurb: Column(Text)
+        website: Column(String)
+        user_prefs: Column(Text)
+        is_active: Column(Boolean, default=True, nullable=False)
+        is_verified: Column(Boolean, default=False, nullable=False)
+        is_public: Column(Boolean, default=False, nullable=False)
+    Relations:
+        user_types: relationship('UserXUserTypeLookup')
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+
+(UserXApplication):
+    Fields:
+        enabled: Column(Boolean, nullable=False, default=False)
+    Relations:
+        user_id: Column(BigInteger, ForeignKey('users.id'), nullable=False)
+        application_id: Column(Integer, ForeignKey('applications.id'), nullable=False)
+    Rules:
+        Unique: [user_id, application_id]
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+
+(GameLocationTypeLookup):
+    Fields:
+        name: Column(String, unique=True)
+        display_name: Column(String(64), unique=True)
+        description: Column(String(64))
+        x_point: Column(Integer)
+        y_point: Column(Integer)
+    Values:
+        name: [
+            world
+        ]
+        display_name: [
+            World
+        ]
+        description: [
+            The Entire Game World
+        ]
+    EntityMixes: [
+            factsbeach.mixes.GameLocationTypeLookupMix
+        ]
+    Rules:
+        Unique: [name]
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+
+(UserEvent):
+    Fields:
+        session_key: Column(String, nullable=False)
+        event_category: Column(String, nullable=False)
+        event_metric: Column(String, nullable=False)
+        event_value: Column(String, nullable=False)
+        build_number: Column(String, nullable=False)
+        in_game_timestamp: Column(NUMERIC, nullable=False)
+        head_health: Column(NUMERIC)
+        torso_health: Column(NUMERIC)
+        right_arm_health: Column(NUMERIC)
+        left_arm_health: Column(NUMERIC)
+        right_leg_health: Column(NUMERIC)
+        left_leg_health: Column(NUMERIC)
+        mental_health: Column(NUMERIC)
+        stamina: Column(NUMERIC)
+        oxygen: Column(NUMERIC)
+        food: Column(NUMERIC)
+        water: Column(NUMERIC)
+        temperature: Column(NUMERIC)
+        total_health: Column(NUMERIC)
+        os_name: Column(String)
+        cpu_name: Column(String)
+        gpu_name: Column(String)
+        gmem_size: Column(Integer)
+        smem_size: Column(Integer)
+        frame_rate: Column(Integer)
+        resolution: Column(String)
+    Relations:
+        game_location_type_id: Column(Integer, ForeignKey('game_location_type_lu.id'))
+    EntityMixes: [
+            factsbeach.mixes.UserEventMix
+        ]
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+
+(DefinedUserEventReport):
+    Fields:
+        name: Column(String)
+        session_key: Column(String)
+        event_category: Column(String)
+        event_metric: Column(String)
+        event_value: Column(String)
+        output_chart_name: Column(String)
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+
+AFTER_CREATE_SQL:
+    Literal: |
+
+        -- first, create some Groups for RBAC
+        INSERT INTO groups
+            (
+                name, description, display_name
+            )
+        VALUES
+            ('su', 'Super user role with access to all application data and logic', 'Super User'),
+            ('admin', 'Role allowed to admin application business logic', 'Administrator'),
+            ('editor', 'Role allowed to edit data', 'Editor'),
+            ('user', 'Role allowed to view data', 'User');
+
+
+
+
+
+
+
+
