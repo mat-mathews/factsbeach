@@ -9,7 +9,7 @@
           type="image/png" 
           href="/assets/mividio_house_bug_small.png" />
 
-	<title>Playmatics :: New User</title>
+	<title>Facts Beach :: New User</title>
 
     <link rel="stylesheet" href="/foundation/css/foundation.css"/>
     <link rel="stylesheet" href="/css/font-awesome/css/font-awesome.min.css">
@@ -83,7 +83,7 @@
 
 <div class="row collapse">
     <div class="small-11 small-centered medium-6 medium-centered columns">
-      <h1 class="subheader">Playmatics</h1>
+      <h1 class="subheader">Facts Beach</h1>
     </div>
 </div>
 
@@ -143,11 +143,11 @@
                     </div>
                 </div>
 
-                <a href="#" id="join-erwin-btn" value="Join Erwin" class="button radius success expand">Join Hevn Online</a>
+                <a href="#" id="join-facts-beach-btn" value="Join Facts Beach" class="button radius success expand">Join Facts Beach</a>
 
             </form>
 
-            <h6>By clicking "Join Erwin", you agree to our 
+            <h6>By clicking "Join Facts Beach", you agree to our 
             <a href="/assets/terms.html">terms of service and privacy policy</a>.</h6>
 
             <div id="loading-gif"></div>
@@ -192,7 +192,7 @@ function checkForm(){
   return true;
 }
 
-$("#join-erwin-btn").click(function(event){
+$("#join-facts-beach-btn").click(function(event){
 
   event.preventDefault();
 

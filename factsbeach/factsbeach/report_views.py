@@ -96,13 +96,18 @@ def base_report(request):
 
 				session_keys = session.query(UE.session_key).distinct().all()
 
+				game_play_events = session.query(~GamePlayEventTypeLookup).all()
+
+
+
 				return dict(
 					status='Ok',
 					duer=duer,
 					session_keys=session_keys,
 					ue_cats=[c[0] for c in ue_cats],
 					ue_mets=[m[0] for m in ue_mets],
-					ue_vals=[v[0] for v in ue_vals]
+					ue_vals=[v[0] for v in ue_vals],
+					game_play_events=game_play_events
 					)
 
 		raise HTTPUnauthorized
@@ -471,11 +476,14 @@ def get_base_session_compare_data(request):
 		if user and user.is_active:
 
 			with SQLAlchemySessionFactory() as session:
+
+				ec = kwds['event_category'] if kwds['event_category'] != "" else None
+				em = kwds['event_metric'] if kwds['event_metric'] != "" else None 
 				
 				UE = ~UserEvent
 				q = (session.query(UE)
-						.filter(UE.event_category==kwds['event_category'])
-						.filter(UE.event_metric==kwds['event_metric'])
+						.filter(UE.event_category==ec)
+						.filter(UE.event_metric==em)
 						.filter(UE.event_value==kwds['event_value'])
 						)
 				if 'session_key' in kwds and kwds['session_key'] != None:
@@ -485,15 +493,10 @@ def get_base_session_compare_data(request):
 
 				rp = q.all()
 
-				print 'get_base_session_compare_data rp', rp
-
 				vals = []
 				for ue in rp:
 					vals.append([float(ue.in_game_timestamp), 1])
-
-
-				print 'get_base_session_compare_data vals', vals
-
+					
 				return dict(
 					status='Ok',
 					cat_name=kwds['event_category'],

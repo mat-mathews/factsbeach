@@ -212,11 +212,37 @@ PYAELLAC:
         - add_tr_standard_mod.sql.mako
 
 
+(GamePlayEventTypeLookup):
+    Fields:
+        name: Column(String)
+        display_name: Column(String(64))
+        description: Column(String(64))
+        event_category: Column(String)
+        event_metric: Column(String)
+    Values:
+        name: [
+            na
+        ]
+        display_name: [
+            NA
+        ]
+        description: [
+            Not Available
+        ]
+    EntityMixes: [
+            factsbeach.mixes.GamePlayEventTypeLookupMix
+        ]
+    Rules:
+        Unique: [name, event_category, event_metric]
+    Options:
+        - add_tr_standard_mod.sql.mako
+
+
 (UserEvent):
     Fields:
         session_key: Column(String, nullable=False)
-        event_category: Column(String, nullable=False)
-        event_metric: Column(String, nullable=False)
+        event_category: Column(String)
+        event_metric: Column(String)
         event_value: Column(String, nullable=False)
         build_number: Column(String, nullable=False)
         in_game_timestamp: Column(NUMERIC, nullable=False)
@@ -274,6 +300,22 @@ AFTER_CREATE_SQL:
             ('admin', 'Role allowed to admin application business logic', 'Administrator'),
             ('editor', 'Role allowed to edit data', 'Editor'),
             ('user', 'Role allowed to view data', 'User');
+
+
+        -- create an app domain and give it a name
+        INSERT INTO application_domains (name) VALUES ('<app_domain_name_here>');
+
+
+        INSERT INTO applications 
+            (   name, 
+                application_domain_id
+            ) 
+        SELECT 
+            'factsbeach-summer-meakan', ad.id
+        FROM 
+            application_domains ad
+        WHERE 
+            ad.name = '<app_domain_name_here>';
 
 
 

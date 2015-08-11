@@ -23,7 +23,7 @@ from pyaella.dinj import BorgLexicon, __borg_lex__
 Base = declarative_base(cls=PyaellaSQLAlchemyBase)
 ReflBase = declarative_base(cls=DeferredReflection)
 
-__autogen_date__ = "2015-07-15 15:14:58.877350"
+__autogen_date__ = "2015-08-11 07:34:25.275464"
 
 __schema_file__ = os.path.join(os.path.dirname(__file__), "domain.plr")
 
@@ -39,6 +39,7 @@ __all__ = [
 	"User",
 	"UserXApplication",
 	"GameLocationTypeLookup",
+	"GamePlayEventTypeLookup",
 	"UserEvent",
 	"DefinedUserEventReport",
 ]
@@ -132,6 +133,13 @@ class UserXApplication(PyaellaDataModel):
 
 
 class GameLocationTypeLookup(Mixable, PyaellaDataModel):
+	__metaclass__ = PyaellaDataModelMetaclass
+	
+	def __init__(self, base=Base, **kw):
+		PyaellaDataModel.__init__(self, base=base, **kw)
+
+
+class GamePlayEventTypeLookup(Mixable, PyaellaDataModel):
 	__metaclass__ = PyaellaDataModelMetaclass
 	
 	def __init__(self, base=Base, **kw):

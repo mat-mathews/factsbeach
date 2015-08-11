@@ -84,10 +84,9 @@ table.jqplot-table-legend {
 
     <p>&nbsp</p>
     <p>&nbsp</p>
-
-
-    <hr>
     <p>&nbsp</p>
+
+    
     <h3><i class="material-icons">map</i> Locations</h3>
 
     <div class="row">
@@ -124,6 +123,47 @@ table.jqplot-table-legend {
             </table>
         </div>
     </div>
+
+
+
+    <p>&nbsp</p>
+    <h3><i class="material-icons">track_changes</i> Game Play Events</h3>
+
+    <div class="row">
+        <div class="col s12">
+            <table>
+                <thead>
+                    <th data-field="name">Name</th>
+                    <th data-field="event_category">Category</th>
+                    <th data-field="event_metric">Metric</th>
+                    <th data-field="edit-btn"> </th>
+                    <th data-field="delete-btn"> </th>
+                </thead>
+                <tbody>
+                    %for gl in game_play_events:
+                        %if gl.name != 'na' and gl.id != 1:
+                        <tr>
+                            <td>${gl.name}</td>
+                            <td>${gl.event_category}</td>
+                            <td>${gl.event_metric}</td>
+                            <td>
+                                <a class="waves-effect waves-light btn edit-game-play-event-btn"
+                                    data-game-play-event-id=${gl.id}><i class="material-icons">edit</i>
+                                </a>
+                            </td>
+                            <td>
+                                <a class="waves-effect waves-light btn delete-game-play-event-btn"
+                                    data-game-play-event-key=${gl.key}><i class="material-icons">remove_circle</i>
+                                </a>
+                            </td>
+                        </tr>
+                        %endif
+                    %endfor
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 
 </div>
 
@@ -200,6 +240,7 @@ table.jqplot-table-legend {
       <i class="large material-icons">add</i>
     </a>
     <ul>
+        <li><a class="btn-floating green lighten-1" id="new-game-play-event-btn"><i class="material-icons">track_changes</i></a></li>
         <li><a class="btn-floating amber" id="user-event-modal-btn"><i class="material-icons">add_box</i></a></li>
         <li><a class="btn-floating teal" id="new-game-location-btn"><i class="material-icons">map</i></a></li>
         <li><a class="btn-floating blue-grey" id="new-defined-ue-report-btn"><i class="material-icons">insert_chart</i></i></a></li>
@@ -674,6 +715,95 @@ table.jqplot-table-legend {
 
 
 
+
+<!-- Modal Structure -->
+<div id="new-game-play-event-modal" class="modal modal-fixed-footer">
+    <br>
+    <div class="container" style="width:90%;">
+
+        <div class="row">
+            <h4>Game Location</h4>
+        </div>
+
+        <div class="row">
+
+            <form id="new-game-play-event-form" method="POST">
+
+                <div class="input-field col s12">
+                    ${
+                        pymf.add_input(
+                            "text", 
+                            name_="event_category", 
+                            id_="game-play-event-category",
+                            required=True
+                        )
+                    }
+                    <label id="game-play-event-category-label" for="game-play-event-category">Category</label>
+                </div>
+
+                <div class="input-field col s12">
+                    ${
+                        pymf.add_input(
+                            "text", 
+                            name_="event_metric", 
+                            id_="game-play-event-metric",
+                            required=True
+                        )
+                    }
+                    <label id="game-play-event-metric-label" for="game-play-event-metric">Metric</label>
+                </div>
+
+                <div class="input-field col s12">
+                    ${
+                        pymf.add_input(
+                            "text", 
+                            name_="name", 
+                            id_="game-play-event-name",
+                            required=True
+                        )
+                    }
+                    <label id="game-play-event-name-label" for="game-play-event-name">Name</label>
+                </div>
+
+                <div class="input-field col s12">
+                    ${
+                        pymf.add_input(
+                            "text", 
+                            name_="display_name", 
+                            id_="game-play-event-display-name",
+                            required=True
+                        )
+                    }
+                    <label id="game-play-event-display-name-label" for="game-play-event-display-name">Display Name</label>
+                </div>
+
+                <div class="input-field col s12">
+                    ${
+                        pymf.add_input(
+                            "text", 
+                            name_="description", 
+                            id_="game-play-event-description",
+                            required=True
+                        )
+                    }
+                    <label id="game-play-event-description-label" for="game-play-event-description">Description</label>
+                </div>
+
+
+            </form>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <a href="#!" class="modal-action waves-effect waves-green btn-flat accept-new-game-play-event-btn">Save</a>
+        <a href="#!" class="modal-action waves-effect waves-red btn-flat no-thanks-new-game-play-event-btn">Cancel</a>
+    </div>
+
+</div>
+
+
+
 </body>
 
 <script type="text/javascript">
@@ -905,6 +1035,101 @@ $(document).ready(function(){
         });
 
     });
+
+
+
+    $("#new-game-play-event-btn").click(function(event){
+        $('#new-game-play-event-modal').openModal();
+    });
+
+
+    $(".accept-new-game-play-event-btn").click(function(event){
+        event.preventDefault();
+
+        var form = $("form[id=new-game-play-event-form]");
+        var data = form.serializeArray();
+
+        var action = "PUT";
+        var gl_id = $(this).attr('data-game-play-event-id');
+        if(typeof gl_id === 'undefined'){
+            action = "POST";
+        }else{
+            data.push({'name':'id', 'value':gl_id});
+        }
+
+        $.ajax({
+            type:action,
+            url:"/m/edit/GamePlayEventTypeLookup",
+            data:data,
+            success:function(data){
+                window.location.reload(false);
+            },
+            error:function(data){
+                alert('Error');
+            }
+        });
+
+        $("#new-game-play-event-modal").closeModal();
+
+    });
+
+    $(".no-thanks-new-game-play-event-btn").click(function(event){
+        $("#new-game-play-event-modal").closeModal();
+    });
+
+
+    $(".edit-game-play-event-btn").click(function(event){
+        console.log('edit-game-play-event-btn');
+        event.preventDefault();
+        var gl_id = $(this).attr('data-game-play-event-id');
+        $.ajax({
+            'type':'GET',
+            'url':'/m/edit/GamePlayEventTypeLookup/id='+gl_id,
+            success: function(data){
+                $("#game-play-event-name").val(data.results[0].name);
+                $("#game-play-event-name-label").addClass('active');
+                $("#game-play-event-category").val(data.results[0].event_category);
+                $("#game-play-event-category-label").addClass('active');
+                $("#game-play-event-metric").val(data.results[0].event_metric);
+                $("#game-play-event-metric-label").addClass('active');
+                $("#game-play-event-display-name").val(data.results[0].display_name);
+                $("#game-play-event-display-name-label").addClass('active');
+                $("#game-play-event-description").val(data.results[0].description);
+                $("#game-play-event-description-label").addClass('active');
+                
+                $(".accept-new-game-play-event-btn").attr('data-game-play-event-id', gl_id);
+
+                $("#new-game-play-event-modal").openModal();
+
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                console.log('Error');
+            }
+        });
+
+    });
+
+
+    $(".delete-game-play-event-btn").click(function(event){
+        event.preventDefault();
+        var gl_key = $(this).attr("data-game-play-event-key");
+
+        $.ajax({
+            type:"DELETE",
+            url:"/m/edit/GamePlayEventTypeLookup",
+            data:{
+                key:gl_key
+            },
+            success:function(data){
+                window.location.reload(false);
+            },
+            error:function(data){
+                alert('Error');
+            }
+        });
+
+    });
+
 
 
     $(".duer-card").hover(

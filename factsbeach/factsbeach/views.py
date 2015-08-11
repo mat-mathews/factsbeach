@@ -75,10 +75,13 @@ def user_account(request):
 
                 game_locations = session.query(~GameLocationTypeLookup).all()
 
+                game_play_events = session.query(~GamePlayEventTypeLookup).all()
+
                 return dict(
                     status='Ok',
                     defined_ue_reports=[DefinedUserEventReport(entity=d) for d in duers],
                     game_locations=game_locations,
+                    game_play_events=game_play_events,
                     logged_in=auth_usrid
                     )
 
@@ -98,6 +101,10 @@ def user_account(request):
             session.close()
         except:
             pass
+
+
+
+
 
 
 

@@ -116,6 +116,34 @@ class GameLocationTypeLookupMix(Mix):
 		pass
 
 
+class GamePlayEventTypeLookupMix(Mix):
+
+	def post_pre_hook(self, **kwds):
+		pass
+
+	def post_final_hook(self, session, **kwds):
+		try:
+			ac = get_app_config()
+			dconfig = get_dinj_config(ac)
+			
+			task = Task(
+				target='UpdateDatabase',
+				model='GamePlayEventTypeLookup',
+				action='UPDATE',
+				game_play_event_name=self.name
+				)
+
+			r_srv = _get_redis_server(dconfig)
+
+			if r_srv:
+				data = op.json ** task
+				rpush_res = r_srv.rpush(
+					REDIS_CHANNEL_TO_HEVN_IN, data)
+
+		except:
+			traceback.format_exc()
+
+
 
 
 

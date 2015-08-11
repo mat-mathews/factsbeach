@@ -171,7 +171,7 @@ table.jqplot-table-legend {
 
 	<div class="row">
 		<div class="col s6">
-			<h4>Compare</h4>
+			<h4>Chart User Event</h4>
 		</div>
 		<div class="col s2 offset-s4">
 			<a class="waves-effect waves-light btn right-aligned" id="render-snd-btn">Render</a>
@@ -210,8 +210,37 @@ table.jqplot-table-legend {
 	</div>
 
 	<div class="row">
-		<div id="snd-metric-chart" style="height:400px;width:100%;top:5px;"></div>
+		<div id="snd-metric-chart" style="height:400px;width:100%;top:5px;">Select metrics and values to render</div>
 	</div>
+
+
+	<p>&nbsp</p>
+    <h3><i class="material-icons">track_changes</i> Game Play Events</h3>
+
+    <div class="row">
+        <div class="col s12">
+            <table>
+                <thead>
+                    <th data-field="name">Name</th>
+                    <th data-field="name">Activated</th>
+                </thead>
+                <tbody>
+                    %for gl in game_play_events:
+                        %if gl.name != 'na' and gl.id != 1:
+                        <tr>
+                            <td>${gl.name}</td>
+                            %if gl.name in ue_vals:
+                            	<td>Yes</td>
+                            %else:
+                            	<td>No</td>
+                            %endif
+                        </tr>
+                        %endif
+                    %endfor
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 
 </div>
@@ -494,7 +523,7 @@ $(document).ready(function(){
 
 		$("#snd-metric-chart").html("");
 
-		var session_key = $(this).find(":selected").val();
+		var session_key = $("#select-session").find(":selected").val();
 
 		$.ajax({
 			type:"GET",
