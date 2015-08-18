@@ -73,9 +73,11 @@ def user_account(request):
                 DUER = ~DefinedUserEventReport
                 duers = session.query(DUER).all()
 
-                game_locations = session.query(~GameLocationTypeLookup).all()
+                GLTLU, GPETLU = ~GameLocationTypeLookup, ~GamePlayEventTypeLookup
 
-                game_play_events = session.query(~GamePlayEventTypeLookup).all()
+                game_locations = session.query(GLTLU).order_by(GLTLU.name).all()
+
+                game_play_events = session.query(GPETLU).order_by(GPETLU.name).all()
 
                 return dict(
                     status='Ok',

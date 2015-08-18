@@ -74,19 +74,26 @@ class FactsBeachUpdateThread(threading.Thread):
                 try:
                     if task.action == 'UPDATE' and task.model == 'GameLocationTypeLookup':
 
-                        gltid = gllut(task.game_location_name)
-                        session.query(UE).filter(UE.event_metric==task.game_location_name).update(
-                            { 'game_location_type_id': gltid}, synchronize_session='fetch'
-                        )
-                        session.commit()
+                        try:
+                            gltid = gllut(task.game_location_name)
+                            if gltid:
+                                session.query(UE).filter(UE.event_metric==task.game_location_name).update(
+                                    { 'game_location_type_id': gltid}, synchronize_session='fetch'
+                                )
+                                session.commit()
+                        except:
+                            pass
 
                     if task.action == 'DELETE' and task.model == 'GameLocationTypeLookup':
 
-                        gltid = gllut(task.game_location_name)
-                        session.query(UE).filter(UE.game_location_type_id==task.game_location_type_id).update(
-                            { 'game_location_type_id': 1}, synchronize_session='fetch'
-                        )
-                        session.commit()
+                        try:
+                            gltid = gllut(task.game_location_name)
+                            session.query(UE).filter(UE.game_location_type_id==task.game_location_type_id).update(
+                                { 'game_location_type_id': 1}, synchronize_session='fetch'
+                            )
+                            session.commit()
+                        except:
+                            pass
 
                 except:
                     print traceback.format_exc()
