@@ -7,9 +7,6 @@ import traceback
 import datetime
 import multiprocessing
 import threading
-import PIL as pil
-from boto.s3.key import Key
-from boto.s3.connection import S3Connection, Location
 
 from pyaella import *
 from pyaella import dinj
@@ -21,19 +18,10 @@ from pyaella.orm.xsqlalchemy import SQLAlchemySessionFactory
 from factsbeach import *
 from factsbeach.models import *
 
-#  Boto tutorial here http://docs.pythonboto.org/en/latest/s3_tut.html
 
 __procs__ = [
     'FactsBeachUpdateThread'
 ]
-
-
-# def get_app_config():
-#     return dinj.AppConfig()
-
-
-# def get_dinj_config(app_config):
-#     return dinj.DinjLexicon(parsable=app_config.FullConfigPath)
 
 
 @memoize_exp(expiration=300)

@@ -7,14 +7,9 @@ from sqlalchemy import *
 from sqlalchemy.schema import CheckConstraint, Sequence
 from sqlalchemy.orm import *
 from sqlalchemy.sql.expression import text
-#from sqlalchemy import Table, Column, ForeignKey
-#from sqlalchemy import Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base, declared_attr, DeferredReflection
-try:
-	from geoalchemy2 import *
-except:
-	pass
 from pyramid.security import Allow, Everyone
+
 from pyaella import Mixable, Mix, orm
 from pyaella.orm import *
 from pyaella.orm.xsqlalchemy import PyaellaSQLAlchemyBase, SQLAlchemySessionFactory

@@ -11,9 +11,6 @@ from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import *
 from pyramid.security import (remember, forget, authenticated_userid)
 from mako.template import Template
-#amazon s3 support
-from boto.s3.connection import S3Connection, Location
-from boto.s3.key import Key
 # pyaella imports
 from pyaella import *
 from pyaella import dinj

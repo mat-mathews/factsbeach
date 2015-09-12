@@ -22,8 +22,7 @@ from mako.template import Template
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.exc import *
-from boto.s3.connection import S3Connection, Location
-from boto.s3.key import Key
+
 from pyaella import *
 from pyaella import dinj
 from pyaella.server.api import *
